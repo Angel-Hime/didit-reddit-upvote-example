@@ -48,7 +48,7 @@ CREATE TABLE users
 );
 
 -- Posts table
-CREATE TABLE posts (
+CREATE TABLE post (
     id SERIAL PRIMARY KEY,
     title VARCHAR(255) NOT NULL,
     body TEXT,
@@ -58,12 +58,12 @@ CREATE TABLE posts (
 );
 
 -- Comments table
-CREATE TABLE comments (
+CREATE TABLE comment (
     id SERIAL PRIMARY KEY,
     body TEXT NOT NULL,
     user_id INT REFERENCES users(id),
-    post_id INT REFERENCES posts(id),
-    parent_comment_id INT NULL REFERENCES comments(id),
+    post_id INT REFERENCES post(id),
+    parent_comment_id INT NULL REFERENCES comment(id),
     created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
 );
@@ -72,9 +72,9 @@ CREATE TABLE comments (
 CREATE TABLE votes (
     id SERIAL PRIMARY KEY,
     user_id INT REFERENCES users(id),
-    post_id INT NULL REFERENCES posts(id),
+    post_id INT NULL REFERENCES post(id),
     vote SMALLINT CHECK (vote IN (-1, 1)),
     vote_type VARCHAR(255) CHECK (vote_type IN ('post', 'comment')),
-    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
     -- UNIQUE(user_id, post_id, vote_type)
 );
