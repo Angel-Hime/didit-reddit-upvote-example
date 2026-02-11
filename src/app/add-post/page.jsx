@@ -28,14 +28,14 @@ export default async function Home() {
 
   if (!session) {
     return (
-      <div className="max-w-screen-lg mx-auto p-4 mt-10">
+      <div className="max-w-5xl mx-auto p-4 mt-10">
         You need to login to create a post <LoginButton />
       </div>
     );
   }
 
   return (
-    <div className="max-w-screen-lg mx-auto p-4 bg-zinc-800 mt-10 rounded-xl">
+    <div className="max-w-5xl mx-auto p-4 bg-zinc-800 mt-10 rounded-xl">
       <h2 className="text-3xl mb-4">Add a new post</h2>
       <form action={savePost} className="flex flex-col space-y-4">
         <input

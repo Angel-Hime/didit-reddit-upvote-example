@@ -31,14 +31,14 @@ export default async function SinglePostPage({ params }) {
 
   if (!session) {
     return (
-      <div className="max-w-screen-lg mx-auto p-4 mt-10">
+      <div className="max-w-5xl mx-auto p-4 mt-10">
         You need to login to open a post <LoginButton />
       </div>
     );
   }
 
   return (
-    <div className="max-w-screen-lg mx-auto pt-4 pr-4">
+    <div className="max-w-5xl mx-auto pt-4 pr-4">
       <div className="flex space-x-6">
         <Vote postId={post.id} votes={post.vote_total} />
         <div className="">

@@ -8,9 +8,9 @@ import { auth } from "@/auth";
 
 export async function PostList({ currentPage = 1 }) {
   const session = await auth();
-  const { user } = await auth();
-  console.log(user.name);
-  console.log(user.id); // current user id
+  const user = await auth();
+  console.log(user?.name);
+  console.log(user?.id); // current user id
 
   const { rows: posts } =
     await db.query(`SELECT post.id, post.title, post.body, post.created_at, post.user_id, users.name, 
@@ -25,7 +25,7 @@ export async function PostList({ currentPage = 1 }) {
 
   if (!session) {
     return (
-      <div className="max-w-screen-lg mx-auto p-4 mt-10">
+      <div className="max-w-5xl mx-auto p-4 mt-10">
         Login to view posts! <LoginButton />
       </div>
     );
@@ -33,7 +33,7 @@ export async function PostList({ currentPage = 1 }) {
 
   return (
     <>
-      <ul className="max-w-screen-lg mx-auto p-4 mb-4">
+      <ul className="max-w-5xl mx-auto p-4 mb-4">
         {posts.map((post) => (
           <li
             key={post.id}

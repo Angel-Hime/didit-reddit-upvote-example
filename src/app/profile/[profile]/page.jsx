@@ -32,7 +32,7 @@ export default async function profile({ currentPage = 1, params }) {
 
   if (!session) {
     return (
-      <div className="max-w-screen-lg mx-auto p-4 mt-10">
+      <div className="max-w-5xl mx-auto p-4 mt-10">
         Login to view posts! <LoginButton />
       </div>
     );
@@ -51,7 +51,7 @@ export default async function profile({ currentPage = 1, params }) {
 
         <span className="font-bold text-5xl p-10">{posts[0].name}' Posts</span>
       </div>
-      <ul className="max-w-screen-lg mx-auto p-4 mb-4">
+      <ul className="max-w-5xl mx-auto p-4 mb-4">
         {posts.map((post) => (
           <li
             key={post.id}
