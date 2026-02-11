@@ -23,7 +23,7 @@ export default async function RootLayout({ children }) {
             </Link>
             <Link
               href="/add-post"
-              className="ml-10 hover:bg-zinc-300 p-2 rounded bg-pink-300 text-black"
+              className="ml-10 hover:bg-zinc-300 p-2 rounded bg-pink-300 cursor-pointer text-black"
             >
               Add post
             </Link>
@@ -31,7 +31,7 @@ export default async function RootLayout({ children }) {
               <UserInfo />
             </div>
           </header>
-          <main className="max-w-screen-xl lg:mx-auto">{children}</main>
+          <main className="max-w-7xl lg:mx-auto ">{children}</main>
         </Providers>
       </body>
     </html>

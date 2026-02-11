@@ -4,6 +4,7 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { LoginButton } from "@/components/LoginButton";
 import { LogoutButton } from "@/components/LogoutButton";
+import Link from "next/link";
 
 export default async function Home() {
   const session = await auth();
@@ -35,7 +36,7 @@ export default async function Home() {
   }
 
   return (
-    <div className="max-w-5xl mx-auto p-4 bg-zinc-800 mt-10 rounded-xl">
+    <div className="max-w-5xl mx-auto p-4 bg-zinc-300 mt-10 rounded-xl">
       <h2 className="text-3xl mb-4">Add a new post</h2>
       <form action={savePost} className="flex flex-col space-y-4">
         <input
@@ -49,9 +50,15 @@ export default async function Home() {
           className="text-black px-3 py-2 rounded"
           placeholder="Post content"
         />
-        <button className="bg-green-400 px-4 py-2 text-xl text-black rounded">
-          Submit post
-        </button>
+        <nav className="flex flex-row-reverse justify-between">
+          <button className="cursor-pointer bg-pink-300 px-4 py-2 text-xl hover:drop-shadow-2xl hover:drop-shadow-pink-300 text-black rounded ">
+            Submit post
+          </button>
+          <button className="cursor-pointer bg-pink-300 px-4 py-2 text-xl hover:drop-shadow-2xl hover:drop-shadow-pink-300 text-black rounded">
+            {" "}
+            <Link href={"/"}>Cancel</Link>{" "}
+          </button>
+        </nav>
       </form>
     </div>
   );

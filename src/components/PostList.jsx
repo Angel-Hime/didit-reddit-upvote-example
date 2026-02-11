@@ -11,7 +11,8 @@ export async function PostList({ currentPage = 1, queryString }) {
 
   const { rows: posts } =
     await db.query(`SELECT post.id, post.title, post.body, post.created_at, post.user_id, users.name, 
-    COALESCE(SUM(votes.vote), 0) AS vote_total
+    COALESCE(SUM(votes.vote), 0) AS vote_total,
+    COALESCE(COUNT(votes.vote)) AS interactions
      FROM post
      JOIN users ON post.user_id = users.id
      LEFT JOIN votes ON votes.post_id = post.id
@@ -48,6 +49,14 @@ export async function PostList({ currentPage = 1, queryString }) {
     posts.sort((a, b) => {
       return b.vote_total.localeCompare(a.vote_total);
     });
+  } else if (queryString?.interact === "desc") {
+    posts.sort((a, b) => {
+      return a.interactions.localeCompare(b.interactions);
+    });
+  } else if (queryString?.interact === "asc") {
+    posts.sort((a, b) => {
+      return b.interactions.localeCompare(a.interactions);
+    });
   }
 
   return (
@@ -64,11 +73,11 @@ export async function PostList({ currentPage = 1, queryString }) {
             <Link href={`/?vote=asc`}> Top Voted </Link> |
             <Link href={`/?vote=desc`}> Least Voted </Link>
           </fieldset>
-          {/* <fieldset className="border-2 p-4">
-            <legend className="ml-3"> Top Posts </legend>
-            <Link href={`/?vote=asc`}> Top Voted </Link> |
-            <Link href={`/?vote=desc`}> Least Voted </Link>
-          </fieldset> */}
+          <fieldset className="border-2 p-4">
+            <legend className="ml-3"> Sort By Interaction </legend>
+            <Link href={`?interact=asc`}> Most Interacted </Link> |
+            <Link href={`?interact=desc`}> Least Interacted </Link>
+          </fieldset>
         </div>
         {posts.map((post) => (
           <li

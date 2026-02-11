@@ -21,13 +21,14 @@ export default async function profile({
   // get comments related to posts
 
   const { rows: posts } = await db.query(
-    `SELECT post.id, post.title, post.body, post.created_at, users.name, users.image, 
-    COALESCE(SUM(votes.vote), 0) AS vote_total
+    `SELECT post.id, post.title, post.body, post.created_at, users.name, votes.vote, users.image, 
+    COALESCE(SUM(votes.vote), 0) AS vote_total,
+    COALESCE(COUNT(votes.vote)) AS interactions
      FROM post 
      JOIN users ON post.user_id = users.id
      LEFT JOIN votes ON votes.post_id = post.id
      WHERE post.user_id = $1
-     GROUP BY post.id, users.image, users.name
+     GROUP BY post.id, users.image, votes.vote, users.name
      ORDER BY vote_total DESC
      LIMIT ${POSTS_PER_PAGE}
      OFFSET ${POSTS_PER_PAGE * (currentPage - 1)}`,
@@ -36,7 +37,8 @@ export default async function profile({
 
   const queryString = await searchParams;
 
-  console.log(queryString);
+  console.log(posts[0].vote);
+  console.log(posts[1].vote);
 
   if (queryString?.sort === "desc") {
     posts.sort((a, b) => {
@@ -57,6 +59,14 @@ export default async function profile({
   } else if (queryString?.vote === "asc") {
     posts.sort((a, b) => {
       return b.vote_total.localeCompare(a.vote_total);
+    });
+  } else if (queryString?.interact === "desc") {
+    posts.sort((a, b) => {
+      return a.interactions.localeCompare(b.interactions);
+    });
+  } else if (queryString?.interact === "asc") {
+    posts.sort((a, b) => {
+      return b.interactions.localeCompare(a.interactions);
     });
   }
 
@@ -98,6 +108,18 @@ export default async function profile({
           <legend className="ml-3"> Sort By Votes </legend>
           <Link href={`/profile/${profile}/?vote=asc`}> Top Voted </Link> |
           <Link href={`/profile/${profile}/?vote=desc`}> Least Voted </Link>
+        </fieldset>
+        <fieldset className="border-2 p-4">
+          <legend className="ml-3"> Sort By Interaction </legend>
+          <Link href={`/profile/${profile}/?interact=asc`}>
+            {" "}
+            Most Interacted{" "}
+          </Link>{" "}
+          |
+          <Link href={`/profile/${profile}/?interact=desc`}>
+            {" "}
+            Least Interacted{" "}
+          </Link>
         </fieldset>
       </div>
 
