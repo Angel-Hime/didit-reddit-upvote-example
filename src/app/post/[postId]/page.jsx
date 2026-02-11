@@ -1,16 +1,21 @@
+import { auth } from "@/auth";
 import { CommentForm } from "@/components/CommentForm";
 import { CommentList } from "@/components/CommentList";
+import { LoginButton } from "@/components/LoginButton";
 import { Vote } from "@/components/Vote";
 import { db } from "@/db";
+import Link from "next/link";
 
 export default async function SinglePostPage({ params }) {
-  const postId = params.postId;
+  const session = await auth();
+
+  const { postId } = await params;
 
   const { rows: posts } = await db.query(
-    `SELECT post.id, post.title, post.body, post.created_at, users.name, 
+    `SELECT post.id, post.title, post.body, post.created_at, post.user_id, users.name, 
     COALESCE(SUM(votes.vote), 0) AS vote_total
     FROM post
-    JOIN users ON post.user_id = user.id
+    JOIN users ON post.user_id = users.id
     LEFT JOIN votes ON votes.post_id = post.id
     WHERE post.id = $1
     GROUP BY post.id, users.name
@@ -24,13 +29,29 @@ export default async function SinglePostPage({ params }) {
      JOIN users on votes.user_id = users.id`,
   );
 
+  if (!session) {
+    return (
+      <div className="max-w-screen-lg mx-auto p-4 mt-10">
+        You need to login to open a post <LoginButton />
+      </div>
+    );
+  }
+
   return (
     <div className="max-w-screen-lg mx-auto pt-4 pr-4">
       <div className="flex space-x-6">
         <Vote postId={post.id} votes={post.vote_total} />
         <div className="">
           <h1 className="text-2xl">{post.title}</h1>
-          <p className="text-zinc-400 mb-4">Posted by {post.name}</p>
+          <p className="text-zinc-400 mb-4">
+            Posted by{" "}
+            <Link
+              className="text-lg hover:text-pink-500"
+              href={`/profile/${post.user_id}`}
+            >
+              {post.name}
+            </Link>
+          </p>
         </div>
       </div>
       <main className="whitespace-pre-wrap m-4">{post.body}</main>

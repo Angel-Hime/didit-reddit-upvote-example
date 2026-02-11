@@ -7,6 +7,7 @@ export const { auth, handlers, signOut, signIn } = NextAuth({
   adapter: PostgresAdapter(db),
   providers: [GitHub],
   trustHost: true,
+  debug: true,
   callbacks: {
     session: async ({ session, user }) => {
       session.user.id = user.id;

@@ -32,7 +32,7 @@ The project is a work in progress and is not yet complete.
 
 ## Potential future features
 
-- [ ] User profiles
+- [x] User profiles
 - [ ] Sorting posts by recent (date posted), top (most upvotes), and most controversial (most upvotes _and_ downvotes)
 - [ ] User karma scores
 - [ ] User badges / trophies (awards for achievements like number of posts, years on the site, etc.)
@@ -46,3 +46,10 @@ The project is a work in progress and is not yet complete.
 - [ ] User following
 - [ ] User feed (posts from users you follow)
 - [ ] User flair
+
+## Debug Checks
+
+- [x] authorisation partition of comment posting
+- [x] authorisation partition of comment display
+- [ ] usage of Image for Next apps
+- [ ] useFormState renamed to React.useActionState - refactor?

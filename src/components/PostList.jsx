@@ -3,10 +3,17 @@ import { Pagination } from "./Pagination";
 import { Vote } from "./Vote";
 import { db } from "@/db";
 import { POSTS_PER_PAGE } from "@/config";
+import { LoginButton } from "./LoginButton";
+import { auth } from "@/auth";
 
 export async function PostList({ currentPage = 1 }) {
+  const session = await auth();
+  const { user } = await auth();
+  console.log(user.name);
+  console.log(user.id); // current user id
+
   const { rows: posts } =
-    await db.query(`SELECT post.id, post.title, post.body, post.created_at, users.name, 
+    await db.query(`SELECT post.id, post.title, post.body, post.created_at, post.user_id, users.name, 
     COALESCE(SUM(votes.vote), 0) AS vote_total
      FROM post
      JOIN users ON post.user_id = users.id
@@ -15,6 +22,14 @@ export async function PostList({ currentPage = 1 }) {
      ORDER BY vote_total DESC
      LIMIT ${POSTS_PER_PAGE}
      OFFSET ${POSTS_PER_PAGE * (currentPage - 1)}`);
+
+  if (!session) {
+    return (
+      <div className="max-w-screen-lg mx-auto p-4 mt-10">
+        Login to view posts! <LoginButton />
+      </div>
+    );
+  }
 
   return (
     <>
@@ -32,7 +47,15 @@ export async function PostList({ currentPage = 1 }) {
               >
                 {post.title}
               </Link>
-              <p className="text-zinc-700">posted by {post.name}</p>
+              <p className="text-zinc-700">
+                posted by{" "}
+                <Link
+                  className="text-lg hover:text-pink-500"
+                  href={`/profile/${post.user_id}`}
+                >
+                  {post.name}
+                </Link>
+              </p>
             </div>
           </li>
         ))}
