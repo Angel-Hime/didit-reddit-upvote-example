@@ -6,11 +6,8 @@ import { POSTS_PER_PAGE } from "@/config";
 import { LoginButton } from "./LoginButton";
 import { auth } from "@/auth";
 
-export async function PostList({ currentPage = 1 }) {
+export async function PostList({ currentPage = 1, queryString }) {
   const session = await auth();
-  const user = await auth();
-  console.log(user?.name);
-  console.log(user?.id); // current user id
 
   const { rows: posts } =
     await db.query(`SELECT post.id, post.title, post.body, post.created_at, post.user_id, users.name, 
@@ -31,9 +28,48 @@ export async function PostList({ currentPage = 1 }) {
     );
   }
 
+  if (queryString?.sort === "desc") {
+    posts.sort((a, b) => {
+      return b.created_at
+        .toLocaleString("en-CA")
+        .localeCompare(a.created_at.toLocaleString("en-CA"));
+    });
+  } else if (queryString?.sort === "asc") {
+    posts.sort((a, b) => {
+      return a.created_at
+        .toLocaleString("en-CA")
+        .localeCompare(b.created_at.toLocaleString("en-CA"));
+    });
+  } else if (queryString?.vote === "desc") {
+    posts.sort((a, b) => {
+      return a.vote_total.localeCompare(b.vote_total);
+    });
+  } else if (queryString?.vote === "asc") {
+    posts.sort((a, b) => {
+      return b.vote_total.localeCompare(a.vote_total);
+    });
+  }
+
   return (
     <>
       <ul className="max-w-5xl mx-auto p-4 mb-4">
+        <div className="max-w-4xl flex flex-row gap-3">
+          <fieldset className="border-2 p-4">
+            <legend className="ml-3"> Sort By Recent </legend>
+            <Link href={`/?sort=asc`}> Sort Oldest First </Link> |
+            <Link href={`/?sort=desc`}> Sort Newest First </Link>
+          </fieldset>
+          <fieldset className="border-2 p-4">
+            <legend className="ml-3"> Sort By Votes </legend>
+            <Link href={`/?vote=asc`}> Top Voted </Link> |
+            <Link href={`/?vote=desc`}> Least Voted </Link>
+          </fieldset>
+          {/* <fieldset className="border-2 p-4">
+            <legend className="ml-3"> Top Posts </legend>
+            <Link href={`/?vote=asc`}> Top Voted </Link> |
+            <Link href={`/?vote=desc`}> Least Voted </Link>
+          </fieldset> */}
+        </div>
         {posts.map((post) => (
           <li
             key={post.id}
@@ -54,7 +90,10 @@ export async function PostList({ currentPage = 1 }) {
                   href={`/profile/${post.user_id}`}
                 >
                   {post.name}
-                </Link>
+                </Link>{" "}
+              </p>
+              <p className="text-zinc-700 text-sm">
+                at {post.created_at.toLocaleString("en-CA")}
               </p>
             </div>
           </li>

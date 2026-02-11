@@ -47,9 +47,10 @@ The project is a work in progress and is not yet complete.
 - [ ] User feed (posts from users you follow)
 - [ ] User flair
 
-## Debug Checks
+## Reflection
 
-- [x] authorisation partition of comment posting
-- [x] authorisation partition of comment display
-- [ ] usage of Image for Next apps
-- [ ] useFormState renamed to React.useActionState - refactor?
+I took ages trying to figure out the errors because of a dependency issue but I didn't know why these were happening so I ultimately ended up using the command 'npm i --legacy-peer-deps' on vercel to make this work for vercel hosting. Once I had an up and running render, I began working on creating a page for user profiles. However!!! The errors returned after this push and I was at a lost, which was super frustrating and I was ready to just leave it alone. I updated the dependencies and then fixed a auth() server issue and things seemed to work but this did create a concern when it came to pushing any further versions to github and redeploying.
+
+I also struggled with making the sorting work but ultimately remembered how searchParams worked, so I Was able to add this to the "/" and "/profile" routes.
+
+I couldn't find how to spoof users however, so I wasn't able to test much functionality with the remaining time that I had remaining.

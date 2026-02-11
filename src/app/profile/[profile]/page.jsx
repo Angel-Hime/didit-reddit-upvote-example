@@ -7,7 +7,11 @@ import { LoginButton } from "@/components/LoginButton";
 import { auth } from "@/auth";
 import Image from "next/image";
 
-export default async function profile({ currentPage = 1, params }) {
+export default async function profile({
+  currentPage = 1,
+  params,
+  searchParams,
+}) {
   const { profile } = await params;
   console.log(profile);
   const session = await auth();
@@ -30,6 +34,32 @@ export default async function profile({ currentPage = 1, params }) {
     [profile],
   );
 
+  const queryString = await searchParams;
+
+  console.log(queryString);
+
+  if (queryString?.sort === "desc") {
+    posts.sort((a, b) => {
+      return b.created_at
+        .toLocaleString("en-CA")
+        .localeCompare(a.created_at.toLocaleString("en-CA"));
+    });
+  } else if (queryString?.sort === "asc") {
+    posts.sort((a, b) => {
+      return a.created_at
+        .toLocaleString("en-CA")
+        .localeCompare(b.created_at.toLocaleString("en-CA"));
+    });
+  } else if (queryString?.vote === "desc") {
+    posts.sort((a, b) => {
+      return a.vote_total.localeCompare(b.vote_total);
+    });
+  } else if (queryString?.vote === "asc") {
+    posts.sort((a, b) => {
+      return b.vote_total.localeCompare(a.vote_total);
+    });
+  }
+
   if (!session) {
     return (
       <div className="max-w-5xl mx-auto p-4 mt-10">
@@ -49,8 +79,28 @@ export default async function profile({ currentPage = 1, params }) {
           className="rounded-full"
         />
 
-        <span className="font-bold text-5xl p-10">{posts[0].name}' Posts</span>
+        <span className="font-bold text-5xl p-10">{posts[0].name}'s Posts</span>
       </div>
+      <div className="max-w-4xl flex flex-row gap-3">
+        <fieldset className="border-2 p-4">
+          <legend className="ml-3"> Sort By Recent </legend>
+          <Link href={`/profile/${profile}/?sort=asc`}>
+            {" "}
+            Sort Oldest First{" "}
+          </Link>{" "}
+          |
+          <Link href={`/profile/${profile}/?sort=desc`}>
+            {" "}
+            Sort Newest First{" "}
+          </Link>
+        </fieldset>
+        <fieldset className="border-2 p-4">
+          <legend className="ml-3"> Sort By Votes </legend>
+          <Link href={`/profile/${profile}/?vote=asc`}> Top Voted </Link> |
+          <Link href={`/profile/${profile}/?vote=desc`}> Least Voted </Link>
+        </fieldset>
+      </div>
+
       <ul className="max-w-5xl mx-auto p-4 mb-4">
         {posts.map((post) => (
           <li
@@ -66,6 +116,9 @@ export default async function profile({ currentPage = 1, params }) {
                 {post.title}
               </Link>
               <p className="text-zinc-700">posted by {post.name}</p>
+              <p className="text-zinc-700 text-sm">
+                at {post.created_at.toLocaleString("en-CA")}
+              </p>
             </div>
           </li>
         ))}
